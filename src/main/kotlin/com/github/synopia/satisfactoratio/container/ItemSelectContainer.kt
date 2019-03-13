@@ -13,6 +13,7 @@ interface ItemSelectStateProps : RProps {
     var amounts: Map<Item, Double>
     var items: List<ItemGroup>
     var configs: List<ConfigTree>
+    var maxBelt: Belt
 }
 
 interface ItemSelectDispatchProps : RProps {
@@ -25,6 +26,7 @@ private val mapStateToProps: ItemSelectStateProps.(AppState, ItemSelectProps) ->
     items = ItemGroups
     amounts = state.requested
     configs = state.configs
+    maxBelt = state.maxBelt
 }
 
 private val mapDispatchToProps: ItemSelectDispatchProps.((RAction) -> WrapperAction, ItemSelectProps) -> Unit = { dispatch, props ->

@@ -5,11 +5,10 @@ import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 
-data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>) : RState
+data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>, val maxBelt: Belt) : RState
 
 data class ToggleSelectedItem(val item: Item) : RAction
 data class SetRequested(val item: Item, val amount: Double) : RAction
-data class ConfigTree(val out: Item, val amountInMin: Double, val input: List<ConfigTree>)
 
 fun appReducer(state: AppState, action: RAction): AppState {
     val newState = when (action) {
@@ -30,7 +29,7 @@ fun appReducer(state: AppState, action: RAction): AppState {
         else -> state
     }
 
-    val map = newState.selected.associateWith { ConfigTree(it, 0.0, emptyList()) }.toMutableMap()
+    val map = newState.selected.associateWith { ConfigTree(it, 0.0, null, emptyList()) }.toMutableMap()
     newState.requested.forEach { e ->
         val item = e.key
         val amount = e.value
@@ -43,4 +42,4 @@ fun appReducer(state: AppState, action: RAction): AppState {
     return newState.copy(configs = configs)
 }
 
-val store = createStore(::appReducer, AppState(emptyMap(), emptyList(), emptyList()), rEnhancer())
+val store = createStore(::appReducer, AppState(emptyMap(), emptyList(), emptyList(), BeltMk3), rEnhancer())
