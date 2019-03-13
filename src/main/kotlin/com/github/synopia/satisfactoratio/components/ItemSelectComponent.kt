@@ -9,6 +9,7 @@ import react.dom.div
 import react.dom.h3
 import react.dom.li
 import react.dom.ul
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 interface ItemSelectProps : RProps {
@@ -60,7 +61,8 @@ class ItemSelectComponent(props: ItemSelectProps) : RComponent<ItemSelectProps, 
                     percent = (100 * count / (count.toInt() + 1)).toInt()
                     count = count.toInt() + 1.0
                 }
-                ", ${formatNumber(count)}x ${recipe.building.name} $percent%"
+                val power = count * recipe.building.power*(percent/100.0).pow(1.6)
+                ", ${formatNumber(count)}x ${recipe.building.name} $percent% = ${formatNumber(power)}MW"
             } else {
                 ""
             }

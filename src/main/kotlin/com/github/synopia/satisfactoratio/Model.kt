@@ -51,12 +51,12 @@ fun findBelt(speed: Double, maxBelt: Belt): Belt {
 }
 
 private fun buildTreeRec(item: Item, amountInMin: Double, map: MutableMap<Item, ConfigTree>): ConfigTree {
+    val recipe = Recipes.find { it.out == item }
     if (map.containsKey(item)) {
-        val tree = ConfigTree(item, amountInMin + map[item]!!.amountInMin, null, emptyList())
+        val tree = ConfigTree(item, amountInMin + map[item]!!.amountInMin, recipe, emptyList())
         map[item] = tree
         return tree
     } else {
-        val recipe = Recipes.find { it.out == item }
         if (recipe != null) {
             val f = amountInMin / recipe.amount / recipe.ratePerMin
             val i = recipe.ingredient.map {
