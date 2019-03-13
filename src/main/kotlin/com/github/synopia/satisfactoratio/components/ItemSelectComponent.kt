@@ -24,15 +24,19 @@ interface ItemSelectProps : RProps {
 
 class ItemSelectComponent(props: ItemSelectProps) : RComponent<ItemSelectProps, RState>(props) {
     override fun RBuilder.render() {
-        props.items.forEach { group ->
-            h3 { +group.name }
-            div {
-                group.items.forEach { item ->
-                    item(item, props.selected.contains(item), props.amounts[item] ?: 0.0, {
-                        props.onItemToggled(item)
-                    }, { amount ->
-                        props.onAmountChanged(item, amount)
-                    })
+        div("container") {
+            props.items.forEach { group ->
+                div("columns") {
+                    div("column col-12") {
+                        h3 { +group.name }
+                    }
+                    group.items.forEach { item ->
+                        item(item, props.selected.contains(item), props.amounts[item] ?: 0.0, {
+                            props.onItemToggled(item)
+                        }, { amount ->
+                            props.onAmountChanged(item, amount)
+                        })
+                    }
                 }
             }
         }

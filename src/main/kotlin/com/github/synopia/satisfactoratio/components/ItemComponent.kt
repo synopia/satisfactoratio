@@ -1,7 +1,11 @@
 package com.github.synopia.satisfactoratio.components
 
 import com.github.synopia.satisfactoratio.Item
+import kotlinx.css.Display
+import kotlinx.css.Float
+import kotlinx.css.em
 import kotlinx.html.InputType
+import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
@@ -10,8 +14,12 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
+import react.dom.img
 import react.dom.input
 import react.dom.p
+import styled.css
+import styled.styledDiv
+import styled.styledInput
 
 interface ItemProps : RProps {
     var item: Item
@@ -24,8 +32,14 @@ interface ItemProps : RProps {
 
 class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
     override fun RBuilder.render() {
-        div {
-            p { +props.item.name }
+        styledDiv {
+            attrs {
+                classes = setOf("column", "col-1")
+            }
+            css {
+                display = Display.inlineBlock
+                float = Float.left
+            }
             input(InputType.checkBox) {
                 attrs {
                     checked = props.selected
@@ -34,7 +48,16 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
                     }
                 }
             }
-            input(InputType.number) {
+            img(alt = props.item.name, src = "images/${props.item.image}") {
+                attrs {
+                    width = "32px"
+                    height = "32px"
+                }
+            }
+            styledInput(InputType.number) {
+                css {
+                    width = 3.em
+                }
                 attrs {
                     value = props.amount.toString()
                     onChangeFunction = {
