@@ -34,7 +34,7 @@ private val mapDispatchToProps: ItemSelectDispatchProps.((RAction) -> WrapperAct
     onAmountChanged = { item, amount -> dispatch(SetRequested(item, amount)) }
 }
 
-val c: RClass<ItemSelectProps> = rConnect<AppState, RAction, WrapperAction, ItemSelectProps, ItemSelectStateProps, ItemSelectDispatchProps, ItemSelectProps>(
+private val c: RClass<ItemSelectProps> = rConnect<AppState, RAction, WrapperAction, ItemSelectProps, ItemSelectStateProps, ItemSelectDispatchProps, ItemSelectProps>(
         mapStateToProps, mapDispatchToProps
 )(ItemSelectComponent::class.js as RClass<ItemSelectProps>)
 

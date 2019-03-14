@@ -8,15 +8,14 @@ import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.title
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.div
 import react.dom.img
 import react.dom.input
-import react.dom.p
 import styled.css
 import styled.styledDiv
 import styled.styledInput
@@ -34,7 +33,7 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
     override fun RBuilder.render() {
         styledDiv {
             attrs {
-                classes = setOf("column", "col-1")
+                classes = setOf("column", "col-2")
             }
             css {
                 display = Display.inlineBlock
@@ -52,6 +51,7 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
                 attrs {
                     width = "32px"
                     height = "32px"
+                    title = props.item.name
                 }
             }
             styledInput(InputType.number) {

@@ -5,7 +5,15 @@ import redux.RAction
 import redux.createStore
 import redux.rEnhancer
 
-data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>, val maxBelt: Belt) : RState
+data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>, val maxBelt: Belt) : RState {
+    fun addItem(item: Item): AppState {
+        return copy(selected = selected + item)
+    }
+
+    fun removeItem(item: Item): AppState {
+        return copy(selected = selected - item, requested = requested.filterNot { it.key == item })
+    }
+}
 
 data class ToggleSelectedItem(val item: Item) : RAction
 data class SetRequested(val item: Item, val amount: Double) : RAction
@@ -14,9 +22,9 @@ fun appReducer(state: AppState, action: RAction): AppState {
     val newState = when (action) {
         is ToggleSelectedItem -> {
             if (!state.selected.contains(action.item)) {
-                state.copy(selected = state.selected + action.item)
+                state.addItem(action.item)
             } else if (state.selected.contains(action.item)) {
-                state.copy(selected = state.selected - action.item)
+                state.removeItem(action.item)
             } else {
                 state
             }
@@ -29,7 +37,8 @@ fun appReducer(state: AppState, action: RAction): AppState {
         else -> state
     }
 
-    val map = newState.selected.associateWith { ConfigTree(it, 0.0, null, emptyList()) }.toMutableMap()
+    val map = newState.selected.associateWith { ConfigTree(it, 0.0) }.toMutableMap()
+
     newState.requested.forEach { e ->
         val item = e.key
         val amount = e.value
@@ -37,7 +46,14 @@ fun appReducer(state: AppState, action: RAction): AppState {
             buildTree(item, amount, map)
         }
     }
-    val configs = map.values.toList()
+
+    val configs = map.values.toList().map {
+        if (it.input.isEmpty()) {
+            buildTreeRec(it.out, it.amountInMin, mutableMapOf())
+        } else {
+            it
+        }
+    }
 
     return newState.copy(configs = configs)
 }

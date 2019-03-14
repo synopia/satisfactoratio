@@ -21,62 +21,18 @@ data class ItemGroup(val name: String) {
 
 data class Ingredient(val item: Item, val amount: Int, val rateInMin: Double)
 data class Recipe(val out: Item, val amount: Int, val ratePerMin: Double, val building: Building, val ingredient: List<Ingredient>)
-data class Belt(val name: String, val maxSpeed: Double)
-data class Building(val name: String, val inputs: Int, val power: Double)
-data class ConfigTree(val out: Item, val amountInMin: Double, val recipe: Recipe?, val input: List<ConfigTree>)
+data class Belt(val name: String, val maxSpeed: Double, val image: String)
+data class Building(val name: String, val inputs: Int, val power: Double, val image: String)
 
-fun buildTree(item: Item, amountInMin: Double, map: MutableMap<Item, ConfigTree>) {
-    val recipe = Recipes.find { it.out == item }
-    val tree = if (recipe != null) {
-        val f = amountInMin / recipe.amount / recipe.ratePerMin
-        val i = recipe.ingredient.map {
-            buildTreeRec(it.item, it.rateInMin * f, map)
-        }
-        ConfigTree(item, amountInMin, recipe, i)
-    } else {
-        ConfigTree(item, amountInMin, null, emptyList())
-    }
-    map[item] = tree
-}
 
-fun findBelt(speed: Double, maxBelt: Belt): Belt {
-    Belts.forEach { belt ->
-        if (belt.maxSpeed <= maxBelt.maxSpeed) {
-            if (speed <= belt.maxSpeed) {
-                return belt
-            }
-        }
-    }
-    return maxBelt
-}
-
-private fun buildTreeRec(item: Item, amountInMin: Double, map: MutableMap<Item, ConfigTree>): ConfigTree {
-    val recipe = Recipes.find { it.out == item }
-    if (map.containsKey(item)) {
-        val tree = ConfigTree(item, amountInMin + map[item]!!.amountInMin, recipe, emptyList())
-        map[item] = tree
-        return tree
-    } else {
-        if (recipe != null) {
-            val f = amountInMin / recipe.amount / recipe.ratePerMin
-            val i = recipe.ingredient.map {
-                buildTreeRec(it.item, it.rateInMin * f, map)
-            }
-            return ConfigTree(item, amountInMin, recipe, i)
-        } else {
-            return ConfigTree(item, amountInMin, null, emptyList())
-        }
-    }
-}
-
-val MinerMk1 = Building("Miner Mk1", 1, 5.0)
-val MinerMk2 = Building("Miner Mk2", 1, 12.0)
-val Smelter = Building("Smelter", 1, 4.0)
-val Foundry = Building("Foundry", 2, 16.0)
-val Constructor = Building("Constructor", 1, 4.0)
-val Assembler = Building("Assembler", 2, 15.0)
-val Manufacturer = Building("Manufacturer", 4, 30.0)
-val OilRefinery = Building("Oil Refinery", 1, 25.0)
+val MinerMk1 = Building("Miner Mk1", 1, 5.0, "minermk1.png")
+val MinerMk2 = Building("Miner Mk2", 1, 12.0, "minermk2.png")
+val Smelter = Building("Smelter", 1, 4.0, "smelter.png")
+val Foundry = Building("Foundry", 2, 16.0, "foundry.png")
+val Constructor = Building("Constructor", 1, 4.0, "constructor.png")
+val Assembler = Building("Assembler", 2, 15.0, "assembler.png")
+val Manufacturer = Building("Manufacturer", 4, 30.0, "")
+val OilRefinery = Building("Oil Refinery", 1, 25.0, "oil_refinery.png")
 val Resources = ItemGroup("Resources")
 val IronOre = Item("Iron Ore", "iron_ore.png", Resources)
 val CopperOre = Item("Copper Ore", "copper_ore.png", Resources)
@@ -122,12 +78,15 @@ val Computer = Item("Computer", "computer.png", ExpansionStage)
 
 val ItemGroups = listOf(Resources, EstablishedStage, DevelopmentStage, ExpansionStage)
 
-val BeltMk1 = Belt("Belt Mk1", 60.0)
-val BeltMk2 = Belt("Belt Mk2", 120.0)
-val BeltMk3 = Belt("Belt Mk3", 270.0)
+val BeltMk1 = Belt("Belt Mk1", 60.0, "beltmk1.png")
+val BeltMk2 = Belt("Belt Mk2", 120.0, "beltmk2.png")
+val BeltMk3 = Belt("Belt Mk3", 270.0, "beltmk3.png")
 
 val Belts = listOf(BeltMk1, BeltMk2, BeltMk3)
 val Recipes = listOf(
+        Recipe(IronOre, 1, 60.0, MinerMk1, emptyList()),
+        Recipe(CopperOre, 1, 60.0, MinerMk1, emptyList()),
+        Recipe(Coal, 1, 60.0, MinerMk1, emptyList()),
         Recipe(IronIngot, 1, 30.0, Smelter, listOf(Ingredient(IronOre, 1, 30.0))),
         Recipe(CopperIngot, 1, 30.0, Smelter, listOf(Ingredient(CopperOre, 1, 30.0))),
         Recipe(SteelIngot, 2, 30.0, Foundry, listOf(Ingredient(IronOre, 3, 45.0), Ingredient(Coal, 3, 45.0))),
