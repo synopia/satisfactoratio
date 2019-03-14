@@ -126,11 +126,11 @@ task copyResourcesForDce {
 task dist(type: Copy, dependsOn: 'bundle') {
     from "src/main/web"
     from "${buildDir.path}/bundle"
-    into file(buildDir.path + "/distributions/" + project.name)
+    into file("dist")
 }
 
 task distZip(type: Zip, dependsOn: 'dist') {
-    from (buildDir.path + "/distributions/" + project.name)
+    from ("dist")
 }
 
 afterEvaluate {
