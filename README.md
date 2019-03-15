@@ -6,7 +6,7 @@ Uses Kotlin with react, redux, styled.
 
 ### Development
 
-`./gradlew -t run `
+`./gradlew -t run`
 
 ### Build and publish
 

@@ -1,0 +1,120 @@
+apply plugin: 'kotlin-platform-js'
+if (production) {
+    apply plugin: 'kotlin-dce-js'
+}
+apply plugin: 'org.jetbrains.kotlin.frontend'
+apply plugin: 'kotlinx-serialization'
+
+dependencies {
+    expectedBy project(':common')
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.9.1"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.1.0"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion}"
+    compile "org.jetbrains:kotlin-css:1.0.0-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-css-js:1.0.0-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-react:16.6.0-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-redux:4.0.0-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-react-dom:16.6.0-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-react-redux:5.0.7-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-react-router-dom:4.3.1-${kotlinJsWrapperVersion}"
+    compile "org.jetbrains:kotlin-styled:1.0.0-${kotlinJsWrapperVersion}"
+
+    testCompile 'org.jetbrains.kotlin:kotlin-test-js'
+}
+
+kotlinFrontend {
+    downloadNodeJsVersion = "latest"
+    npm {
+        devDependency("source-map-loader")
+        dependency("uglifyjs-webpack-plugin")
+        dependency("inline-style-prefixer")
+        dependency("react")
+        dependency("react-dom")
+        dependency("react-redux")
+        dependency("react-router-dom")
+        dependency("redux")
+        dependency("jquery")
+        dependency("styled-components")
+        dependency("bootstrap")
+        dependency("lz-string")
+        devDependency("karma")
+        devDependency("qunit")
+    }
+    karma {
+        preprocessors = ["webpack"]
+        plugins = ["karma-webpack", "karma-phantomjs-launcher", "karma-junit-reporter", "karma-qunit"]
+    }
+    webpackBundle {
+        bundleName = "main"
+        contentPath = file('src/main/web')
+        proxyUrl = "http://localhost:8080"
+        mode = production ? "production" : "development"
+        sourceMapEnabled = !production
+    }
+    define "PRODUCTION", production
+
+}
+
+compileKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.outputFile = "$project.buildDir.path/js/${project.name}.js"
+    kotlinOptions.sourceMap = !production
+    kotlinOptions.moduleKind = 'commonjs'
+    kotlinOptions.sourceMapEmbedSources = "always"
+    kotlinOptions.main = "call"
+}
+
+compileTestKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.outputFile = "$project.buildDir.path/js-tests/${project.name}-tests.js"
+    kotlinOptions.sourceMap = !production
+    kotlinOptions.moduleKind = 'commonjs'
+    kotlinOptions.sourceMapEmbedSources = "always"
+    kotlinOptions.main = "call"
+}
+
+task copyResources(type: Copy) {
+    from "src/main/resources"
+    into file(buildDir.path + "/js")
+}
+
+task copyResourcesForDce {
+    doLast {
+        copy {
+            from "src/main/resources"
+            ext.modulesDir = new File("${buildDir.path}/node_modules_imported/")
+            if (modulesDir.exists()) {
+                modulesDir.eachDir {
+                    if (it.name.startsWith("kvision")) {
+                        from(it) {
+                            include "css/**"
+                            include "img/**"
+                            include "js/**"
+                        }
+                    }
+                }
+            }
+            into file(buildDir.path + "/kotlin-js-min/main")
+        }
+    }
+}
+
+task dist(type: Copy, dependsOn: 'bundle') {
+    from "src/main/web"
+    from "${buildDir.path}/bundle"
+    into file("dist")
+}
+
+task distZip(type: Zip, dependsOn: 'dist') {
+    from ("dist")
+}
+
+afterEvaluate {
+    if (production) {
+        tasks.getByName("copyResourcesForDce") { dependsOn(runDceKotlinJs) }
+    }
+    tasks.getByName("webpack-bundle") { dependsOn(copyResources, copyResourcesForDce) }
+    tasks.getByName("webpack-run") { dependsOn(copyResources) }
+    tasks.getByName("karma-start") { dependsOn(copyResources) }
+}
