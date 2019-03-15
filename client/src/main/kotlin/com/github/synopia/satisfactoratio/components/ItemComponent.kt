@@ -7,13 +7,12 @@ import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.title
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.img
+import react.dom.button
 import react.dom.input
 import styled.css
 import styled.styledDiv
@@ -47,12 +46,8 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
                     }
                 }
             }
-            img(alt = props.item.name, src = "images/${props.item.image}") {
-                attrs {
-                    width = "32px"
-                    height = "32px"
-                    title = props.item.name
-                }
+            button(classes = "btn-icon icon-${props.item.image} tooltip tooltip-bottom") {
+                attrs["data-tooltip"] = props.item.name
             }
             styledInput(InputType.number) {
                 css {

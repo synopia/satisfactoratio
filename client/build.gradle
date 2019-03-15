@@ -38,6 +38,8 @@ kotlinFrontend {
         dependency("styled-components")
         dependency("bootstrap")
         dependency("lz-string")
+        devDependency("path")
+        devDependency("webpack-spritesmith")
         devDependency("karma")
         devDependency("qunit")
     }
