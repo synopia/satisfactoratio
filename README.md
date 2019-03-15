@@ -12,4 +12,4 @@ Uses Kotlin with react, redux, styled.
 
 `./gradlew -Pprod=true dist`
 
-`git subtree push --prefix dist origin gh-pages`
+`git subtree push --prefix client/dist origin gh-pages`

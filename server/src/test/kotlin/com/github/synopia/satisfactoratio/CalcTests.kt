@@ -44,7 +44,7 @@ fun config(out: Item, amountInMin: Double, count: Double, percent: Int, init: Co
 class CalcTests : StringSpec({
 
     "testOreNormal" {
-        buildTreeRec(IronPlate, 15.0, mutableMapOf()) shouldBeTree
+        buildTree(IronPlate, 15.0, emptyList()) shouldBeTree
                 config(IronPlate, 15.0, 1.0, 100) {
                     add(IronIngot, 30.0, 1.0, 100) {
                         add(IronOre, 30.0, 1.0, 50)
@@ -52,14 +52,14 @@ class CalcTests : StringSpec({
                 }
     }
     "testLimestoneNormal" {
-        buildTreeRec(Concrete, 15.0, mutableMapOf()) shouldBeTree
+        buildTree(Concrete, 15.0, emptyList()) shouldBeTree
                 config(Concrete, 15.0, 1.0, 100) {
                     add(Limestone, 45.0, 1.0, 75)
                 }
     }
 
     "testWireNormal" {
-        buildTreeRec(Wire, 45.0, mutableMapOf()) shouldBeTree
+        buildTree(Wire, 45.0, emptyList()) shouldBeTree
                 config(Wire, 45.0, 1.0, 100) {
                     add(CopperIngot, 15.0, 1.0, 50) {
                         add(CopperOre, 15.0, 1.0, 25)
@@ -67,5 +67,33 @@ class CalcTests : StringSpec({
                 }
     }
 
+    "testRotorReinforcedIronPlate" {
+        val selected = listOf(ReinforcedIronPlate, Rotor, IronIngot)
+        val map = mutableMapOf<Item, Double>()
+        collectItems(ReinforcedIronPlate, 3.0, map, selected)
+        collectItems(Rotor, 2.0, map, selected)
+        map shouldBe mapOf(ReinforcedIronPlate to 3.0, Rotor to 2.0, IronIngot to 49.333333333333336)
 
+    }
+    "testCollectNothing" {
+        val selected = listOf(IronPlate)
+        val map = mutableMapOf<Item, Double>()
+        collectItems(IronPlate, 10.0, map, selected)
+        map shouldBe mapOf(IronPlate to 10.0)
+    }
+
+    "testCollectSingleItem" {
+        val selected = listOf(IronIngot, IronPlate)
+        val map = mutableMapOf<Item, Double>()
+        collectItems(IronPlate, 10.0, map, selected)
+        map shouldBe mapOf(IronPlate to 10.0, IronIngot to 20.0)
+    }
+
+    "testCollectDoubleItem" {
+        val selected = listOf(IronIngot, IronRod, IronPlate)
+        val map = mutableMapOf<Item, Double>()
+        collectItems(IronPlate, 10.0, map, selected)
+        collectItems(IronRod, 10.0, map, selected)
+        map shouldBe mapOf(IronPlate to 10.0, IronRod to 10.0, IronIngot to 30.0)
+    }
 })

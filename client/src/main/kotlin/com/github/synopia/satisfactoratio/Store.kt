@@ -38,23 +38,24 @@ fun appReducer(state: AppState, action: RAction): AppState {
         else -> state
     }
 
-    val map = newState.selected.associateWith { ConfigTree(it, 0.0) }.toMutableMap()
-
+    val map = mutableMapOf<Item, Double>()
     newState.requested.forEach { e ->
         val item = e.key
         val amount = e.value
         if (amount > 0.0) {
-            buildTree(item, amount, map)
+            collectItems(item, amount, map, newState.selected)
         }
     }
 
-    val configs = map.values.toList().map {
-        if (it.input.isEmpty()) {
-            buildTreeRec(it.out, it.amountInMin, mutableMapOf())
+    val configs = map.map { e ->
+        val item = e.key
+        val rateInMin = e.value
+        if (rateInMin > 0.0) {
+            buildTree(item, rateInMin, newState.selected)
         } else {
-            it
+            null
         }
-    }
+    }.filterNotNull()
 
     return newState.copy(configs = configs)
 }

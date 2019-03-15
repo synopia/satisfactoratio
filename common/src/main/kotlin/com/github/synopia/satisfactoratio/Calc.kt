@@ -30,19 +30,30 @@ data class ConfigTree(val out: Item, val amountInMin: Double, val recipe: Recipe
     }
 }
 
-fun buildTree(item: Item, amountInMin: Double, map: MutableMap<Item, ConfigTree>) {
-    val recipe = Recipes.find { it.out == item }
-    val totalAmount = amountInMin + (map[item]?.amountInMin ?: 0.0)
-    val tree = if (recipe != null) {
-        val f = totalAmount / recipe.ratePerMin
-        val i = recipe.ingredient.map {
-            buildTreeRec(it.item, it.rateInMin * f, map)
-        }
-        ConfigTree(item, totalAmount, recipe, i)
-    } else {
-        ConfigTree(item, totalAmount, null, emptyList())
+fun collectItems(item: Item, rateInMin: Double, map: MutableMap<Item, Double>, selected: List<Item>) {
+    if (selected.contains(item)) {
+        map[item] = (map[item] ?: 0.0) + rateInMin
     }
-    map[item] = tree
+    val recipe = Recipes.find { it.out == item }
+    if (recipe != null) {
+        val f = rateInMin / recipe.ratePerMin
+        recipe.ingredient.forEach {
+            collectItems(it.item, it.rateInMin * f, map, selected)
+        }
+    }
+}
+
+fun buildTree(item: Item, rateInMin: Double, selected: List<Item>, root: Boolean = true): ConfigTree {
+    val recipe = Recipes.find { it.out == item }
+    return if (recipe != null && (root || !selected.contains(item))) {
+        val f = rateInMin / recipe.ratePerMin
+        val i = recipe.ingredient.map {
+            buildTree(it.item, it.rateInMin * f, selected, false)
+        }
+        ConfigTree(item, rateInMin, recipe, i)
+    } else {
+        ConfigTree(item, rateInMin, null, emptyList())
+    }
 }
 
 fun findBelt(speed: Double, maxBelt: Belt): Belt {
@@ -56,21 +67,3 @@ fun findBelt(speed: Double, maxBelt: Belt): Belt {
     return maxBelt
 }
 
-fun buildTreeRec(item: Item, amountInMin: Double, map: MutableMap<Item, ConfigTree>): ConfigTree {
-    val recipe = Recipes.find { it.out == item }
-    if (map.containsKey(item)) {
-        val tree = ConfigTree(item, amountInMin + map[item]!!.amountInMin, recipe)
-        map[item] = tree
-        return ConfigTree(item, amountInMin)
-    } else {
-        if (recipe != null) {
-            val f = amountInMin / recipe.ratePerMin
-            val i = recipe.ingredient.map {
-                buildTreeRec(it.item, it.rateInMin * f, map)
-            }
-            return ConfigTree(item, amountInMin, recipe, i)
-        } else {
-            return ConfigTree(item, amountInMin, null)
-        }
-    }
-}
