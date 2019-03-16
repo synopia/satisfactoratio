@@ -6,8 +6,8 @@ import kotlin.math.pow
 data class ConfigTree(val id: String, val out: Item, val rateInMin: Double, val recipe: Recipe? = null, val isGrouped: Boolean = false, val input: List<ConfigTree> = emptyList()) {
     var buildingCount: Int
     var buildingPercent: Int
-    var groupPercent: Int = 100
-    var parentBuildings: Int = 1
+    var group: ConfigTree? = null
+    var parent: ConfigTree? = null
     val power: Double
     val totalPower: Double
 
@@ -32,8 +32,23 @@ data class ConfigTree(val id: String, val out: Item, val rateInMin: Double, val 
     }
 
     override fun toString(): String {
-        return "$id: ${recipe?.out ?: "-"} $buildingCount $buildingPercent $groupPercent"
+        return "$id: ${recipe?.out ?: "-"} $buildingCount $buildingPercent "
     }
+
+
+    fun calcGroupPercent(map: Map<Item, ConfigTree>) {
+        val group = map[out]
+        if (group != null) {
+            this.group = group
+        }
+        input.forEach {
+            it.calcGroupPercent(map)
+            it.parent = this
+        }
+    }
+
+    fun groupPercent() = (this.rateInMin / (group?.rateInMin ?: rateInMin) * 100).toInt()
+    fun parentBuildings() = (this.parent?.buildingCount) ?: 1
 }
 
 fun collectItems(item: Item, rateInMin: Double, map: MutableMap<Item, Double>, selected: List<Item>) {
@@ -64,16 +79,6 @@ fun buildTree(item: Item, rateInMin: Double, selected: List<Item>, id: String = 
     }
 }
 
-fun ConfigTree.calcGroupPercent(map: Map<Item, ConfigTree>) {
-    val group = map[out]
-    if (group != null) {
-        this.groupPercent = (this.rateInMin / group.rateInMin * 100).toInt()
-    }
-    input.forEach {
-        it.calcGroupPercent(map)
-        it.parentBuildings = this.buildingCount
-    }
-}
 fun findBelt(speed: Double, maxBelt: Belt): Belt {
     Belts.forEach { belt ->
         if (belt.maxSpeed <= maxBelt.maxSpeed) {
