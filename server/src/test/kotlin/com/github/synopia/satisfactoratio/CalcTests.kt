@@ -5,37 +5,44 @@ import io.kotlintest.specs.StringSpec
 import test.*
 
 infix fun ConfigTree.shouldBeTree(tree: ConfigTree) {
+    println("${this} -> $tree")
+    this.id shouldBe tree.id
+    this.isGrouped shouldBe tree.isGrouped
     this.out shouldBe tree.out
-    this.amountInMin shouldBe tree.amountInMin
+    this.rateInMin shouldBe tree.rateInMin
     this.buildingCount shouldBe tree.buildingCount
     this.buildingPercent shouldBe tree.buildingPercent
+    this.groupPercent shouldBe tree.groupPercent
+    this.parentBuildings shouldBe tree.parentBuildings
     this.input.size shouldBe tree.input.size
     this.input.forEachIndexed { index, _ ->
         this.input[index] shouldBeTree tree.input[index]
     }
 }
 
-class ConfigBuilder(val out: Item, val amountInMin: Double, val count: Double, val percent: Int) {
+class ConfigBuilder(val out: Item, val rateInMin: Double, val count: Int, val percent: Int, val isGrouped: Boolean = false, val groupPercent: Int, val parentBuildings: Int) {
     var children: List<ConfigBuilder> = emptyList()
 
-    fun add(out: Item, amountInMin: Double, count: Double, percent: Int, init: ConfigBuilder.() -> Unit = {}): ConfigBuilder {
-        val child = ConfigBuilder(out, amountInMin, count, percent)
+    fun add(out: Item, amountInMin: Double, count: Int, percent: Int, isGrouped: Boolean = false, groupPercent: Int = 100, parentBuildings: Int = 1, init: ConfigBuilder.() -> Unit = {}): ConfigBuilder {
+        val child = ConfigBuilder(out, amountInMin, count, percent, isGrouped, groupPercent, parentBuildings)
         child.init()
         children += child
         return child
     }
 
-    fun build(): ConfigTree {
-        val configTree = ConfigTree(out, amountInMin, input = children.map { it.build() })
+    fun build(id: String = "0"): ConfigTree {
+        val configTree = ConfigTree(id, out, rateInMin, input = children.mapIndexed { index, child -> child.build("$id-$index") }, isGrouped = isGrouped)
         configTree.buildingCount = count
         configTree.buildingPercent = percent
+        configTree.groupPercent = groupPercent
+        configTree.parentBuildings = parentBuildings
         return configTree
     }
 }
 
 
-fun config(out: Item, amountInMin: Double, count: Double, percent: Int, init: ConfigBuilder.() -> Unit): ConfigTree {
-    val root = ConfigBuilder(out, amountInMin, count, percent)
+fun config(out: Item, amountInMin: Double, count: Int, percent: Int, init: ConfigBuilder.() -> Unit): ConfigTree {
+    val root = ConfigBuilder(out, amountInMin, count, percent, false, 100, 1)
     root.init()
     return root.build()
 }
@@ -45,25 +52,85 @@ class CalcTests : StringSpec({
 
     "testOreNormal" {
         buildTree(IronPlate, 15.0, emptyList()) shouldBeTree
-                config(IronPlate, 15.0, 1.0, 100) {
-                    add(IronIngot, 30.0, 1.0, 100) {
-                        add(IronOre, 30.0, 1.0, 50)
+                config(IronPlate, 15.0, 1, 100) {
+                    add(IronIngot, 30.0, 1, 100) {
+                        add(IronOre, 30.0, 1, 50)
                     }
                 }
     }
     "testLimestoneNormal" {
         buildTree(Concrete, 15.0, emptyList()) shouldBeTree
-                config(Concrete, 15.0, 1.0, 100) {
-                    add(Limestone, 45.0, 1.0, 75)
+                config(Concrete, 15.0, 1, 100) {
+                    add(Limestone, 45.0, 1, 75)
                 }
     }
 
     "testWireNormal" {
         buildTree(Wire, 45.0, emptyList()) shouldBeTree
-                config(Wire, 45.0, 1.0, 100) {
-                    add(CopperIngot, 15.0, 1.0, 50) {
-                        add(CopperOre, 15.0, 1.0, 25)
+                config(Wire, 45.0, 1, 100) {
+                    add(CopperIngot, 15.0, 1, 50) {
+                        add(CopperOre, 15.0, 1, 25)
                     }
+                }
+    }
+
+    "testFrame" {
+        buildTree(ModularFrame, 4.0, listOf(ModularFrame)) shouldBeTree
+                config(ModularFrame, 4.0, 1, 100) {
+                    add(ReinforcedIronPlate, 12.0, 3, 80) {
+                        add(IronPlate, 48.0, 4, 80) {
+                            add(IronIngot, 96.0, 4, 80) {
+                                add(IronOre, 96.0, 2, 80)
+                            }
+                        }
+                        add(Screw, 288.0, 4, 80) {
+                            add(IronRod, 48.0, 4, 80) {
+                                add(IronIngot, 48.0, 2, 80) {
+                                    add(IronOre, 48.0, 1, 80)
+                                }
+                            }
+                        }
+                    }
+
+                    add(IronRod, 24.0, 2, 80) {
+                        add(IronIngot, 24.0, 1, 80) {
+                            add(IronOre, 24.0, 1, 40)
+                        }
+                    }
+
+                }
+    }
+
+    "testFrameGroupedByIronIngot" {
+        val items = listOf(ModularFrame, IronIngot)
+        val map = mutableMapOf<Item, Double>()
+        collectItems(ModularFrame, 4.0, map, items)
+        val tree = buildTree(ModularFrame, 4.0, items)
+        val tree2 = buildTree(IronIngot, 96 + 48.0 + 24.0, items)
+        val m = mapOf(ModularFrame to tree, IronIngot to tree2)
+        tree.calcGroupPercent(m)
+        tree2.calcGroupPercent(m)
+        tree shouldBeTree
+                config(ModularFrame, 4.0, 1, 100) {
+                    add(ReinforcedIronPlate, 12.0, 3, 80) {
+                        add(IronPlate, 48.0, 4, 80, parentBuildings = 3) {
+                            add(IronIngot, 96.0, 4, 80, true, 57, parentBuildings = 4)
+                        }
+
+                        add(Screw, 288.0, 4, 80, parentBuildings = 3) {
+                            add(IronRod, 48.0, 4, 80, parentBuildings = 4) {
+                                add(IronIngot, 48.0, 2, 80, true, 28, parentBuildings = 4)
+                            }
+                        }
+                    }
+
+                    add(IronRod, 24.0, 2, 80) {
+                        add(IronIngot, 24.0, 1, 80, true, 14, parentBuildings = 2)
+                    }
+                }
+        tree2 shouldBeTree
+                config(IronIngot, 168.0, 6, 93) {
+                    add(IronOre, 168.0, 3, 93, parentBuildings = 6)
                 }
     }
 

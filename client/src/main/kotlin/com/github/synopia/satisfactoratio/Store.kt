@@ -47,15 +47,21 @@ fun appReducer(state: AppState, action: RAction): AppState {
         }
     }
 
+    val map2 = mutableMapOf<Item, ConfigTree>()
     val configs = map.map { e ->
         val item = e.key
         val rateInMin = e.value
         if (rateInMin > 0.0) {
-            buildTree(item, rateInMin, newState.selected)
+            val tree = buildTree(item, rateInMin, newState.selected)
+            map2[item] = tree
+            tree
         } else {
             null
         }
-    }.filterNotNull()
+    }.filterNotNull().map { e ->
+        e.calcGroupPercent(map2)
+        e
+    }
 
     return newState.copy(configs = configs)
 }

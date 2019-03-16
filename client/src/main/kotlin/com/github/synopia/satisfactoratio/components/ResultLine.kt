@@ -1,22 +1,19 @@
 package com.github.synopia.satisfactoratio.components
 
+import com.github.synopia.satisfactoratio.ConfigTree
 import com.github.synopia.satisfactoratio.findBelt
 import kotlinx.html.js.onClickFunction
 import react.*
 import react.dom.br
 import react.dom.button
 import react.dom.div
-import test.*
+import test.Belt
+import test.BeltMk2
+import test.Belts
 import kotlin.math.roundToInt
 
 interface ResultLineProps : RProps {
-    var id: Int
-    var ratePerMin: Double
-    var out: Item
-    var recipe: Recipe?
-    var buildingCount: Double
-    var buildingPercent: Int
-    var power: Double
+    var configLine: ConfigTree
 }
 
 interface ResultLineState : RState {
@@ -25,16 +22,25 @@ interface ResultLineState : RState {
 
 class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLineState>(props) {
     override fun ResultLineState.init(props: ResultLineProps) {
-        belt = findBelt(props.ratePerMin, BeltMk2)
+        belt = findBelt(props.configLine.rateInMin / props.configLine.parentBuildings, BeltMk2)
+    }
+
+    override fun componentWillReceiveProps(nextProps: ResultLineProps) {
+        setState {
+            belt = findBelt(props.configLine.rateInMin / props.configLine.parentBuildings, BeltMk2)
+        }
     }
 
     override fun RBuilder.render() {
         val belt = state.belt
-        val beltCount = props.ratePerMin / belt.maxSpeed
-        val recipe = props.recipe
-        +"${formatNumber(props.ratePerMin)}/min"
-        button(classes = "btn-icon icon-${props.out.image} tooltip tooltip-bottom") {
-            attrs["data-tooltip"] = props.out.name
+        val beltCount = props.configLine.rateInMin / belt.maxSpeed / props.configLine.parentBuildings
+        val recipe = props.configLine.recipe
+        +"${formatNumber(props.configLine.rateInMin)}/min"
+        button(classes = "btn-icon icon-${props.configLine.out.image} tooltip tooltip-bottom") {
+            attrs["data-tooltip"] = props.configLine.out.name
+        }
+        if (props.configLine.isGrouped) {
+            +"${props.configLine.groupPercent}%"
         }
         +"(${formatNumber(beltCount)}x"
         div("popover popover-right") {
@@ -63,11 +69,11 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
             }
         }
         if (recipe != null) {
-            +", ${formatNumber(props.buildingCount)}x"
+            +", ${props.configLine.buildingCount}x"
             button(classes = "btn-icon icon-${recipe.building.image} tooltip tooltip-bottom") {
                 attrs["data-tooltip"] = recipe.building.name
             }
-            +"${props.buildingPercent}% = ${formatNumber(props.power)}MW"
+            +"${props.configLine.buildingPercent}% = ${formatNumber(props.configLine.power)}MW"
         }
         +")"
 
@@ -79,14 +85,8 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
 }
 
 
-fun RBuilder.resultLine(id: Int, out: Item, ratePerMin: Double, recipe: Recipe?, buildingCount: Double, buildingPercent: Int, power: Double) = child(ResultLine::class) {
+fun RBuilder.resultLine(configLine: ConfigTree) = child(ResultLine::class) {
     attrs {
-        this.id = id
-        this.out = out
-        this.ratePerMin = ratePerMin
-        this.recipe = recipe
-        this.buildingCount = buildingCount
-        this.buildingPercent = buildingPercent
-        this.power = power
+        this.configLine = configLine
     }
 }

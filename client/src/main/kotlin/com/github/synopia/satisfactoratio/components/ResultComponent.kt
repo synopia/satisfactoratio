@@ -15,7 +15,6 @@ interface ResultProps : RProps {
     var configs: List<ConfigTree>
 }
 class ResultComponent(props: ResultProps) : RComponent<ResultProps, RState>(props) {
-    var id: Int = 0
     override fun RBuilder.render() {
         div("panel") {
             div("panel-header") {
@@ -27,7 +26,6 @@ class ResultComponent(props: ResultProps) : RComponent<ResultProps, RState>(prop
                 p {
                     +"Total Power: ${formatNumber(props.configs.sumByDouble { it.totalPower })}MW"
                 }
-                id = 0
                 props.configs.forEach { config ->
                     ul {
                         renderTree(config)
@@ -41,7 +39,7 @@ class ResultComponent(props: ResultProps) : RComponent<ResultProps, RState>(prop
 
     fun RBuilder.renderTree(configTree: ConfigTree) {
         li {
-            resultLine(id++, configTree.out, configTree.amountInMin, configTree.recipe, configTree.buildingCount, configTree.buildingPercent, configTree.power)
+            resultLine(configTree)
             if (configTree.input.isNotEmpty()) {
                 ul {
                     configTree.input.forEach {
