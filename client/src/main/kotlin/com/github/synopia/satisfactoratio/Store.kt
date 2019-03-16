@@ -38,32 +38,10 @@ fun appReducer(state: AppState, action: RAction): AppState {
         else -> state
     }
 
-    val map = mutableMapOf<Item, Double>()
-    newState.requested.forEach { e ->
-        val item = e.key
-        val amount = e.value
-        if (amount > 0.0) {
-            collectItems(item, amount, map, newState.selected)
-        }
-    }
+    val config = ConfigRequest(newState.requested, newState.selected)
+    val res = config.build()
 
-    val map2 = mutableMapOf<Item, ConfigTree>()
-    val configs = map.map { e ->
-        val item = e.key
-        val rateInMin = e.value
-        if (rateInMin > 0.0) {
-            val tree = buildTree(item, rateInMin, newState.selected)
-            map2[item] = tree
-            tree
-        } else {
-            null
-        }
-    }.filterNotNull().map { e ->
-        e.calcGroupPercent(map2)
-        e
-    }
-
-    return newState.copy(configs = configs)
+    return newState.copy(configs = res.trees)
 }
 
 val store = createStore(::appReducer, AppState(emptyMap(), emptyList(), emptyList()), rEnhancer())

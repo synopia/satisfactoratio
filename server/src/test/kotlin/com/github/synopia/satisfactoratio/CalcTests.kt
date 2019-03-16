@@ -47,16 +47,16 @@ fun config(out: Item, amountInMin: Double, count: Int, percent: Int, init: Confi
     return root.build()
 }
 
-fun buildTestTree(item: Item, rateInMin: Double, selected: List<Item>, id: String = "0"): ConfigTree {
-    val tree = buildTree(item, rateInMin, selected, id)
-    tree.calcGroupPercent(emptyMap())
-    return tree
+fun buildTestTree(item: Item, rateInMin: Double): ConfigTree {
+    val r = ConfigRequest(mapOf(item to rateInMin), listOf(item))
+    val tree = r.build()
+    return tree.trees.first()
 }
 
 class CalcTests : StringSpec({
 
     "testOreNormal" {
-        buildTestTree(IronPlate, 15.0, emptyList()) shouldBeTree
+        buildTestTree(IronPlate, 15.0) shouldBeTree
                 config(IronPlate, 15.0, 1, 100) {
                     add(IronIngot, 30.0, 1, 100) {
                         add(IronOre, 30.0, 1, 50)
@@ -64,14 +64,14 @@ class CalcTests : StringSpec({
                 }
     }
     "testLimestoneNormal" {
-        buildTestTree(Concrete, 15.0, emptyList()) shouldBeTree
+        buildTestTree(Concrete, 15.0) shouldBeTree
                 config(Concrete, 15.0, 1, 100) {
                     add(Limestone, 45.0, 1, 75)
                 }
     }
 
     "testWireNormal" {
-        buildTestTree(Wire, 45.0, emptyList()) shouldBeTree
+        buildTestTree(Wire, 45.0) shouldBeTree
                 config(Wire, 45.0, 1, 100) {
                     add(CopperIngot, 15.0, 1, 50) {
                         add(CopperOre, 15.0, 1, 25)
@@ -80,7 +80,7 @@ class CalcTests : StringSpec({
     }
 
     "testFrame" {
-        buildTestTree(ModularFrame, 4.0, listOf(ModularFrame)) shouldBeTree
+        buildTestTree(ModularFrame, 4.0) shouldBeTree
                 config(ModularFrame, 4.0, 1, 100) {
                     add(ReinforcedIronPlate, 12.0, 3, 80) {
                         add(IronPlate, 48.0, 4, 80) {
@@ -108,14 +108,10 @@ class CalcTests : StringSpec({
 
     "testFrameGroupedByIronIngot" {
         val items = listOf(ModularFrame, IronIngot)
-        val map = mutableMapOf<Item, Double>()
-        collectItems(ModularFrame, 4.0, map, items)
-        val tree = buildTree(ModularFrame, 4.0, items)
-        val tree2 = buildTree(IronIngot, 96 + 48.0 + 24.0, items)
-        val m = mapOf(ModularFrame to tree, IronIngot to tree2)
-        tree.calcGroupPercent(m)
-        tree2.calcGroupPercent(m)
-        tree shouldBeTree
+        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items)
+        val res = req.build()
+
+        res.trees[0] shouldBeTree
                 config(ModularFrame, 4.0, 1, 100) {
                     add(ReinforcedIronPlate, 12.0, 3, 80) {
                         add(IronPlate, 48.0, 4, 80) {
@@ -133,39 +129,10 @@ class CalcTests : StringSpec({
                         add(IronIngot, 24.0, 1, 80, true, 14)
                     }
                 }
-        tree2 shouldBeTree
+        res.trees[1] shouldBeTree
                 config(IronIngot, 168.0, 6, 93) {
                     add(IronOre, 168.0, 3, 93)
                 }
     }
 
-    "testRotorReinforcedIronPlate" {
-        val selected = listOf(ReinforcedIronPlate, Rotor, IronIngot)
-        val map = mutableMapOf<Item, Double>()
-        collectItems(ReinforcedIronPlate, 3.0, map, selected)
-        collectItems(Rotor, 2.0, map, selected)
-        map shouldBe mapOf(ReinforcedIronPlate to 3.0, Rotor to 2.0, IronIngot to 49.333333333333336)
-
-    }
-    "testCollectNothing" {
-        val selected = listOf(IronPlate)
-        val map = mutableMapOf<Item, Double>()
-        collectItems(IronPlate, 10.0, map, selected)
-        map shouldBe mapOf(IronPlate to 10.0)
-    }
-
-    "testCollectSingleItem" {
-        val selected = listOf(IronIngot, IronPlate)
-        val map = mutableMapOf<Item, Double>()
-        collectItems(IronPlate, 10.0, map, selected)
-        map shouldBe mapOf(IronPlate to 10.0, IronIngot to 20.0)
-    }
-
-    "testCollectDoubleItem" {
-        val selected = listOf(IronIngot, IronRod, IronPlate)
-        val map = mutableMapOf<Item, Double>()
-        collectItems(IronPlate, 10.0, map, selected)
-        collectItems(IronRod, 10.0, map, selected)
-        map shouldBe mapOf(IronPlate to 10.0, IronRod to 10.0, IronIngot to 30.0)
-    }
 })
