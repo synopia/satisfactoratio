@@ -6,7 +6,7 @@ import redux.createStore
 import redux.rEnhancer
 import test.Item
 
-data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>) : RState {
+data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, val configs: List<ConfigTree>, val options: Map<String, ConfigOption>) : RState {
     fun addItem(item: Item): AppState {
         return copy(selected = selected + item)
     }
@@ -18,6 +18,8 @@ data class AppState(val requested: Map<Item, Double>, val selected: List<Item>, 
 
 data class ToggleSelectedItem(val item: Item) : RAction
 data class SetRequested(val item: Item, val amount: Double) : RAction
+data class SetOption(val option: ConfigOption) : RAction
+data class ResetOption(val id: String) : RAction
 
 fun appReducer(state: AppState, action: RAction): AppState {
     val newState = when (action) {
@@ -35,13 +37,19 @@ fun appReducer(state: AppState, action: RAction): AppState {
             val selected = if (!state.selected.contains(action.item)) state.selected + action.item else state.selected
             state.copy(requested = map, selected = selected)
         }
+        is SetOption -> {
+            state.copy(options = state.options + Pair(action.option.id, action.option))
+        }
+        is ResetOption -> {
+            state.copy(options = state.options.filterKeys { it != action.id })
+        }
         else -> state
     }
 
-    val config = ConfigRequest(newState.requested, newState.selected)
+    val config = ConfigRequest(newState.requested, newState.selected, newState.options)
     val res = config.build()
 
     return newState.copy(configs = res.trees)
 }
 
-val store = createStore(::appReducer, AppState(emptyMap(), emptyList(), emptyList()), rEnhancer())
+val store = createStore(::appReducer, AppState(emptyMap(), emptyList(), emptyList(), emptyMap()), rEnhancer())

@@ -1,11 +1,11 @@
 package com.github.synopia.satisfactoratio.components
 
-import com.github.synopia.satisfactoratio.ConfigTree
-import com.github.synopia.satisfactoratio.findBelt
+import com.github.synopia.satisfactoratio.*
 import kotlinx.html.js.onClickFunction
 import react.*
 import react.dom.button
 import react.dom.div
+import react.dom.i
 import test.Belt
 import test.BeltMk2
 import test.Belts
@@ -13,6 +13,8 @@ import kotlin.math.roundToInt
 
 interface ResultLineProps : RProps {
     var configLine: ConfigTree
+
+    var onOptionsChanged: (ConfigOption) -> Unit
 }
 
 interface ResultLineState : RState {
@@ -46,40 +48,71 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
             button(classes = "btn-icon icon-${belt.image}") {
                 attrs["data-tooltip"] = belt.name
             }
-            div("popover-container") {
-                div("card") {
-                    div("container") {
-                        div("columns") {
-                            Belts.forEach { b ->
-                                div("column col-6") {
-                                    val cls = if (b == belt) "btn-primary" else ""
-                                    button(classes = "btn $cls") {
-                                        +b.name
-                                        attrs {
-                                            onClickFunction = {
-                                                setState {
-                                                    this.belt = b
-                                                }
-                                            }
-                                        }
+            popupContainer {
+
+                Belts.forEach { b ->
+                    div("column col-6") {
+                        val cls = if (b == belt) "btn-primary" else ""
+                        button(classes = "btn $cls") {
+                            +b.name
+                            attrs {
+                                onClickFunction = {
+                                    setState {
+                                        this.belt = b
                                     }
                                 }
-                                div("column col-6") {
-                                    val parent = if (b == BeltMk2) {
-                                        "${props.configLine.parentBuildings()}"
-                                    } else ""
-                                    +"${formatNumber(props.configLine.rateInMin / b.maxSpeed / props.configLine.parentBuildings())}x $parent"
+                            }
+                        }
+                    }
+                    div("column col-6") {
+                        val parent = if (b == BeltMk2) {
+                            "${props.configLine.parentBuildings()}"
+                        } else ""
+                        +"${formatNumber(props.configLine.rateInMin / b.maxSpeed / props.configLine.parentBuildings())}x $parent"
+                    }
+                }
+
+            }
+        }
+        if (recipe != null) {
+            +", ${props.configLine.buildingCount}x"
+            div("popover popover-bottom") {
+                button(classes = "btn-icon icon-${recipe.building.image} tooltip tooltip-bottom") {
+                    attrs["data-tooltip"] = recipe.building.name
+                }
+                popupContainer {
+                    div("column col-3") {
+                        button(classes = "btn btn-primary btn-action") {
+                            i(classes = "icon icon-arrow-up") {}
+                            attrs {
+                                onClickFunction = {
+                                    store.dispatch(SetOption(ConfigOption(props.configLine.id, props.configLine.buildingCount + 1)))
+                                }
+                            }
+                        }
+                    }
+                    div("column col-3") {
+                        button(classes = "btn btn-primary btn-action") {
+                            i(classes = "icon icon-arrow-down") {}
+                            attrs {
+                                onClickFunction = {
+                                    store.dispatch(SetOption(ConfigOption(props.configLine.id, props.configLine.buildingCount - 1)))
+                                }
+                            }
+                        }
+                    }
+                    div("column col-6") {
+                        val onOff = if (!props.configLine.buildCountRequested) "btn-primary" else ""
+                        button(classes = "btn $onOff") {
+                            i(classes = "icon icon-refresh") {}
+                            attrs {
+                                onClickFunction = {
+                                    store.dispatch(ResetOption(props.configLine.id))
                                 }
                             }
                         }
                     }
                 }
-            }
-        }
-        if (recipe != null) {
-            +", ${props.configLine.buildingCount}x"
-            button(classes = "btn-icon icon-${recipe.building.image} tooltip tooltip-bottom") {
-                attrs["data-tooltip"] = recipe.building.name
             }
             +"${props.configLine.buildingPercent}% = ${formatNumber(props.configLine.power)}MW"
         }
@@ -89,6 +122,18 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
 
     fun formatNumber(v: Double): String {
         return ((v * 1000).roundToInt() / 1000.0).toString()
+    }
+
+    fun RBuilder.popupContainer(block: RBuilder.() -> Unit) {
+        div("popover-container") {
+            div("card") {
+                div("container") {
+                    div("columns") {
+                        block()
+                    }
+                }
+            }
+        }
     }
 }
 
