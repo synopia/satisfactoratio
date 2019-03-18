@@ -16,30 +16,12 @@ data class ConfigTree(val id: String, val out: Item, var rateInMin: Double, var 
     var availableOptions = emptyList<RecipeConfig>()
     var purity: Purity = Purity.Normal
 
-    fun calculatePassOne(options: Map<String, ConfigOptions>) {
-        passOneActions.forEach {
-            it.apply(this, options)
-        }
-    }
-
-    fun calculatePassTwo(options: Map<String, ConfigOptions>) {
-        passTwoActions.forEach {
-            it.apply(this, options)
-        }
-    }
-
     override fun toString(): String {
         return "$id: ${recipe?.out ?: "-"} $buildingCount $buildingPercent "
     }
 
     fun groupPercent() = (this.rateInMin / (group?.rateInMin ?: rateInMin) * 100).toInt()
     fun parentBuildings() = (this.parent?.buildingCount) ?: 1
-
-    companion object {
-        val groupMap = mutableMapOf<Item, ConfigTree>()
-        val passOneActions = listOf(SetParents(groupMap), ApplyBuildings(), RoundBuildings())
-        val passTwoActions = listOf(SetGroups(groupMap), ExtractAvailableOptions(), CalculateBuildings(), CalculatePower(), CalculateTotalPower())
-    }
 }
 
 

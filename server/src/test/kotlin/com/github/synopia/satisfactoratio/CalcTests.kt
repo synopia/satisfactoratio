@@ -41,10 +41,10 @@ class ConfigBuilder(val out: Item, val rateInMin: Double, val count: Int, val pe
 }
 
 
-fun config(out: Item, amountInMin: Double, count: Int, percent: Int, init: ConfigBuilder.() -> Unit): ConfigTree {
+fun config(out: Item, amountInMin: Double, count: Int, percent: Int, id: String = "0", init: ConfigBuilder.() -> Unit): ConfigTree {
     val root = ConfigBuilder(out, amountInMin, count, percent, false, 100)
     root.init()
-    return root.build()
+    return root.build(id)
 }
 
 fun buildTestTree(item: Item, rateInMin: Double): ConfigTree {
@@ -130,7 +130,36 @@ class CalcTests : StringSpec({
                     }
                 }
         res.trees[1] shouldBeTree
-                config(IronIngot, 168.0, 6, 93) {
+                config(IronIngot, 168.0, 6, 93, "1") {
+                    add(IronOre, 168.0, 3, 93)
+                }
+    }
+
+    "testFrameGroupedByIronIngotWithBuildingRequest" {
+        val items = listOf(ModularFrame, IronIngot)
+        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items, mapOf("0" to ConfigOptions(null, 2, null)))
+        val res = req.build()
+
+        res.trees[0] shouldBeTree
+                config(ModularFrame, 4.0, 2, 50) {
+                    add(ReinforcedIronPlate, 12.0, 3, 80) {
+                        add(IronPlate, 48.0, 4, 80) {
+                            add(IronIngot, 96.0, 4, 80, true, 57)
+                        }
+
+                        add(Screw, 288.0, 4, 80) {
+                            add(IronRod, 48.0, 4, 80) {
+                                add(IronIngot, 48.0, 2, 80, true, 28)
+                            }
+                        }
+                    }
+
+                    add(IronRod, 24.0, 2, 80) {
+                        add(IronIngot, 24.0, 1, 80, true, 14)
+                    }
+                }
+        res.trees[1] shouldBeTree
+                config(IronIngot, 168.0, 6, 93, "1") {
                     add(IronOre, 168.0, 3, 93)
                 }
     }

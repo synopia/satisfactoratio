@@ -131,11 +131,10 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
                             div("column col-4") {
                                 val onOff = if (props.configLine.purity == purity) "btn-primary" else ""
                                 button(classes = "btn $onOff") {
-                                    i(classes = "icon icon-minermk1") {
-                                        attrs {
-                                            onClickFunction = {
-                                                store.dispatch(SetOptionPurity(props.configLine.id, purity))
-                                            }
+                                    +purity.name
+                                    attrs {
+                                        onClickFunction = {
+                                            store.dispatch(SetOptionPurity(props.configLine.id, purity))
                                         }
                                     }
                                 }

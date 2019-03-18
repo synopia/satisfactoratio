@@ -45,19 +45,22 @@ class SetParents(val map: MutableMap<Item, ConfigTree>) : ConfigAction {
 
 class SetGroups(val map: Map<Item, ConfigTree>) : ConfigAction {
     override fun visitBefore(tree: ConfigTree, options: ConfigOptions?) {
-        tree.group = map[tree.out]
+        if (tree.isGrouped) {
+            tree.group = map[tree.out]
+        }
     }
 }
 
 class ExtractAvailableOptions : ConfigAction {
     override fun visitBefore(tree: ConfigTree, options: ConfigOptions?) {
         val recipes = Recipes.filter { it.out == tree.out }
-        tree.availableOptions = recipes.map { RecipeConfig(it, null) }
+        tree.availableOptions = emptyList()
         val hasPurity = recipes.firstOrNull { it.building.hasPurity } != null
         if (hasPurity) {
             tree.availableOptions += Purity.values().map { RecipeConfig(null, it) }
             tree.purity = options?.requestedPurity ?: Purity.Normal
         }
+        tree.availableOptions += recipes.map { RecipeConfig(it, null) }
     }
 }
 
@@ -102,7 +105,6 @@ class RoundBuildings() : ConfigAction {
     override fun visitAfter(tree: ConfigTree, options: ConfigOptions?) {
         val last = stack.last()
         stack = stack.dropLast(1)
-        println("${last.count} to ${last.snapCount()}")
         if (!tree.buildCountRequested) {
             if (tree.input.isNotEmpty()) {
                 val min = tree.input.map { it.buildingCount }.min()!!

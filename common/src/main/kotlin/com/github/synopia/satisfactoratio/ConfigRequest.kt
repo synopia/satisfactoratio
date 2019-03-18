@@ -7,6 +7,9 @@ import test.Recipes
 
 class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val options: Map<String, ConfigOptions> = emptyMap()) {
     val map = mutableMapOf<Item, Double>()
+    val groupMap = mutableMapOf<Item, ConfigTree>()
+    val passOneActions = listOf(SetParents(groupMap), ApplyBuildings(), RoundBuildings())
+    val passTwoActions = listOf(SetGroups(groupMap), ExtractAvailableOptions(), CalculateBuildings(), CalculatePower(), CalculateTotalPower())
 
     fun build(): ConfigResponse {
         reqMap.forEach { e ->
@@ -16,18 +19,30 @@ class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val
                 collectItems(item, amount)
             }
         }
+        var id = 0
         val trees = map.map { e ->
             val item = e.key
             val rateInMin = e.value
             if (rateInMin > 0.0) {
-                val tree = buildTree(item, rateInMin)
+                val tree = buildTree(item, rateInMin, id.toString())
+                id++
                 tree
             } else {
                 null
             }
         }.filterNotNull()
-        trees.forEach { it.calculatePassOne(options) }
-        trees.forEach { it.calculatePassTwo(options) }
+        trees.forEach { tree ->
+            passOneActions.forEach {
+                if (it !is RoundBuildings) {
+                    it.apply(tree, options)
+                }
+            }
+        }
+        trees.forEach { tree ->
+            passTwoActions.forEach {
+                it.apply(tree, options)
+            }
+        }
         val totalPower = trees.sumByDouble { it.totalPower }
         return ConfigResponse(trees, totalPower)
 
@@ -50,7 +65,7 @@ class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val
         val recipe = findRecipe(item, id)
         return if (recipe == null) {
             ConfigTree(id, item, rateInMin, null, false, emptyList())
-        } else if (id == "0" || !selected.contains(item)) {
+        } else if (!id.contains("-") || !selected.contains(item)) {
             val f = rateInMin / recipe.ratePerMin
             val i = recipe.ingredient.mapIndexed { index, ingredient ->
                 buildTree(ingredient.item, ingredient.rateInMin * f, "$id-$index")
