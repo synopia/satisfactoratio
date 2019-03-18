@@ -13,8 +13,6 @@ import kotlin.math.roundToInt
 
 interface ResultLineProps : RProps {
     var configLine: ConfigTree
-
-    var onOptionsChanged: (ConfigOption) -> Unit
 }
 
 interface ResultLineState : RState {
@@ -86,7 +84,7 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
                             i(classes = "icon icon-arrow-up") {}
                             attrs {
                                 onClickFunction = {
-                                    store.dispatch(SetOption(ConfigOption(props.configLine.id, props.configLine.buildingCount + 1)))
+                                    store.dispatch(SetOptionBuildings(props.configLine.id, props.configLine.buildingCount + 1))
                                 }
                             }
                         }
@@ -96,7 +94,7 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
                             i(classes = "icon icon-arrow-down") {}
                             attrs {
                                 onClickFunction = {
-                                    store.dispatch(SetOption(ConfigOption(props.configLine.id, props.configLine.buildingCount - 1)))
+                                    store.dispatch(SetOptionBuildings(props.configLine.id, props.configLine.buildingCount - 1))
                                 }
                             }
                         }
@@ -107,7 +105,39 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
                             i(classes = "icon icon-refresh") {}
                             attrs {
                                 onClickFunction = {
-                                    store.dispatch(ResetOption(props.configLine.id))
+                                    store.dispatch(SetOptionBuildings(props.configLine.id, null))
+                                }
+                            }
+                        }
+                    }
+                    props.configLine.availableOptions.forEach { opt ->
+                        val recipe = opt.recipe
+                        if (recipe != null) {
+                            div("column col-4") {
+                                val onOff = if (props.configLine.recipe == recipe) "btn-primary" else ""
+                                button(classes = "btn $onOff") {
+                                    i(classes = "icon icon-${opt.recipe.building.image}") {
+                                        attrs {
+                                            onClickFunction = {
+                                                store.dispatch(SetOptionRecipe(props.configLine.id, opt.recipe))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        val purity = opt.purity
+                        if (purity != null) {
+                            div("column col-4") {
+                                val onOff = if (props.configLine.purity == purity) "btn-primary" else ""
+                                button(classes = "btn $onOff") {
+                                    i(classes = "icon icon-minermk1") {
+                                        attrs {
+                                            onClickFunction = {
+                                                store.dispatch(SetOptionPurity(props.configLine.id, purity))
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

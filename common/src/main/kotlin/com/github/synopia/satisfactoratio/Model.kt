@@ -1,5 +1,10 @@
 package test
 
+enum class Purity(val factor: Double) {
+    Impure(0.5),
+    Normal(1.0),
+    Pure(1.5)
+}
 data class Item(
         val name: String,
         val image: String,
@@ -23,11 +28,11 @@ data class Ingredient(val item: Item, val amount: Int, val rateInMin: Double)
 data class Recipe(val out: Item, val amount: Int, val ratePerMin: Double, val building: Building, val ingredient: List<Ingredient>) {
 }
 data class Belt(val name: String, val maxSpeed: Double, val image: String)
-data class Building(val name: String, val inputs: Int, val power: Double, val image: String)
+data class Building(val name: String, val inputs: Int, val power: Double, val image: String, val hasPurity: Boolean = false)
 
 
-val MinerMk1 = Building("Miner Mk1", 1, 5.0, "minermk1")
-val MinerMk2 = Building("Miner Mk2", 1, 12.0, "minermk2")
+val MinerMk1 = Building("Miner Mk1", 1, 5.0, "minermk1", true)
+val MinerMk2 = Building("Miner Mk2", 1, 12.0, "minermk2", true)
 val Smelter = Building("Smelter", 1, 4.0, "smelter")
 val Foundry = Building("Foundry", 2, 16.0, "foundry")
 val Constructor = Building("Constructor", 1, 4.0, "constructor")
@@ -89,6 +94,10 @@ val Recipes = listOf(
         Recipe(CopperOre, 1, 60.0, MinerMk1, emptyList()),
         Recipe(Coal, 1, 60.0, MinerMk1, emptyList()),
         Recipe(Limestone, 1, 60.0, MinerMk1, emptyList()),
+        Recipe(IronOre, 1, 120.0, MinerMk2, emptyList()),
+        Recipe(CopperOre, 1, 120.0, MinerMk2, emptyList()),
+        Recipe(Coal, 1, 120.0, MinerMk2, emptyList()),
+        Recipe(Limestone, 1, 120.0, MinerMk2, emptyList()),
         Recipe(IronIngot, 1, 30.0, Smelter, listOf(Ingredient(IronOre, 1, 30.0))),
         Recipe(CopperIngot, 1, 30.0, Smelter, listOf(Ingredient(CopperOre, 1, 30.0))),
         Recipe(SteelIngot, 2, 30.0, Foundry, listOf(Ingredient(IronOre, 3, 45.0), Ingredient(Coal, 3, 45.0))),
