@@ -17,266 +17,266 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 <i class="icon icon-home"></i>
 */
 .icon-assembler {
-    background-image: url(sprite.png);
-    background-position: 0px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-bauxite {
-    background-image: url(sprite.png);
-    background-position: -32px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-beltmk1 {
-    background-image: url(sprite.png);
-    background-position: 0px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-beltmk2 {
-    background-image: url(sprite.png);
-    background-position: -32px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-beltmk3 {
-    background-image: url(sprite.png);
-    background-position: -64px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-cable {
-    background-image: url(sprite.png);
-    background-position: -64px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-caterium_ore {
-    background-image: url(sprite.png);
-    background-position: 0px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-circuit_board {
-    background-image: url(sprite.png);
-    background-position: -32px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-coal {
-    background-image: url(sprite.png);
-    background-position: -64px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-computer {
-    background-image: url(sprite.png);
-    background-position: -96px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-concrete {
-    background-image: url(sprite.png);
-    background-position: -96px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-constructor {
-    background-image: url(sprite.png);
-    background-position: -96px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-copper_ingot {
-    background-image: url(sprite.png);
-    background-position: 0px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-copper_ore {
-    background-image: url(sprite.png);
-    background-position: -32px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-crude_oil {
-    background-image: url(sprite.png);
-    background-position: -64px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-foundry {
-    background-image: url(sprite.png);
-    background-position: -96px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-fuel {
-    background-image: url(sprite.png);
-    background-position: -128px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-heavy_modular_frame {
-    background-image: url(sprite.png);
-    background-position: -128px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-iron_ingot {
-    background-image: url(sprite.png);
-    background-position: -128px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-iron_ore {
-    background-image: url(sprite.png);
-    background-position: -128px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-iron_plate {
-    background-image: url(sprite.png);
-    background-position: 0px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-iron_rod {
-    background-image: url(sprite.png);
-    background-position: -32px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-limestone {
-    background-image: url(sprite.png);
-    background-position: -64px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-minermk1 {
-    background-image: url(sprite.png);
-    background-position: -96px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-minermk2 {
-    background-image: url(sprite.png);
-    background-position: -128px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-modular_frame {
-    background-image: url(sprite.png);
-    background-position: -160px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-motor {
-    background-image: url(sprite.png);
-    background-position: -160px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-oil_refinery {
-    background-image: url(sprite.png);
-    background-position: -160px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-plastic {
-    background-image: url(sprite.png);
-    background-position: -160px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-raw_quartz {
-    background-image: url(sprite.png);
-    background-position: -160px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-reinforced_iron_plate {
-    background-image: url(sprite.png);
-    background-position: 0px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-reinforced_steel_plate {
-    background-image: url(sprite.png);
-    background-position: -32px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-rotor {
-    background-image: url(sprite.png);
-    background-position: -64px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -64px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-rubber {
-    background-image: url(sprite.png);
-    background-position: -96px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -96px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-sam_ore {
-    background-image: url(sprite.png);
-    background-position: -128px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -128px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-screw {
-    background-image: url(sprite.png);
-    background-position: -160px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -160px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-smelter {
-    background-image: url(sprite.png);
-    background-position: -192px 0px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px 0px;
+  width: 32px;
+  height: 32px;
 }
 .icon-stator {
-    background-image: url(sprite.png);
-    background-position: -192px -32px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px -32px;
+  width: 32px;
+  height: 32px;
 }
 .icon-steel_ingot {
-    background-image: url(sprite.png);
-    background-position: -192px -64px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px -64px;
+  width: 32px;
+  height: 32px;
 }
 .icon-steel_pipe {
-    background-image: url(sprite.png);
-    background-position: -192px -96px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px -96px;
+  width: 32px;
+  height: 32px;
 }
 .icon-steel_plate {
-    background-image: url(sprite.png);
-    background-position: -192px -128px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px -128px;
+  width: 32px;
+  height: 32px;
 }
 .icon-sulfur {
-    background-image: url(sprite.png);
-    background-position: -192px -160px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -192px -160px;
+  width: 32px;
+  height: 32px;
 }
 .icon-uranium {
-    background-image: url(sprite.png);
-    background-position: 0px -192px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: 0px -192px;
+  width: 32px;
+  height: 32px;
 }
 .icon-wire {
-    background-image: url(sprite.png);
-    background-position: -32px -192px;
-    width: 32px;
-    height: 32px;
+  background-image: url(sprite.png);
+  background-position: -32px -192px;
+  width: 32px;
+  height: 32px;
 }
