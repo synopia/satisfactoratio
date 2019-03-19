@@ -9,7 +9,7 @@ body {
     border: none;
 }
 
-.panel .panel-body {
+.panel .panel-body .tile .tile-body {
     overflow-x: visible;
     overflow-y: visible;
 
