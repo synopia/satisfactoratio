@@ -75,8 +75,7 @@ class ResultLine(props: ResultLineProps) : RComponent<ResultLineProps, ResultLin
         if (recipe != null) {
             +", ${props.configLine.buildingCount}x"
             div("popover popover-bottom") {
-                button(classes = "btn-icon icon-${recipe.building.image} tooltip tooltip-bottom") {
-                    attrs["data-tooltip"] = recipe.building.name
+                button(classes = "btn-icon icon-${recipe.building.image}") {
                 }
                 popupContainer {
                     div("column col-3") {

@@ -55,7 +55,7 @@ fun appReducer(state: AppState, action: RAction): AppState {
         else -> state
     }
 
-    val config = ConfigRequest(newState.requested, newState.selected, newState.options)
+    val config = ConfigRequest(newState.requested, newState.selected, newState.options, false)
     val res = config.build()
 
     return newState.copy(configs = res.trees)

@@ -48,7 +48,7 @@ fun config(out: Item, amountInMin: Double, count: Int, percent: Int, id: String 
 }
 
 fun buildTestTree(item: Item, rateInMin: Double): ConfigTree {
-    val r = ConfigRequest(mapOf(item to rateInMin), listOf(item))
+    val r = ConfigRequest(mapOf(item to rateInMin), listOf(item), emptyMap(), false)
     val tree = r.build()
     return tree.trees.first()
 }
@@ -108,7 +108,7 @@ class CalcTests : StringSpec({
 
     "testFrameGroupedByIronIngot" {
         val items = listOf(ModularFrame, IronIngot)
-        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items)
+        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items, emptyMap(), false)
         val res = req.build()
 
         res.trees[0] shouldBeTree
@@ -137,7 +137,7 @@ class CalcTests : StringSpec({
 
     "testFrameGroupedByIronIngotWithBuildingRequest" {
         val items = listOf(ModularFrame, IronIngot)
-        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items, mapOf("0" to ConfigOptions(null, 2, null)))
+        val req = ConfigRequest(mapOf(ModularFrame to 4.0), items, mapOf("0" to ConfigOptions(null, 2, null)), false)
         val res = req.build()
 
         res.trees[0] shouldBeTree

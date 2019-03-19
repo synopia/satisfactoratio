@@ -5,7 +5,7 @@ import test.Recipe
 import test.Recipes
 
 
-class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val options: Map<String, ConfigOptions> = emptyMap()) {
+class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val options: Map<String, ConfigOptions>, val roundBuildings: Boolean) {
     val map = mutableMapOf<Item, Double>()
     val groupMap = mutableMapOf<Item, ConfigTree>()
     val passOneActions = listOf(SetParents(groupMap), ApplyBuildings(), RoundBuildings())
@@ -33,7 +33,7 @@ class ConfigRequest(val reqMap: Map<Item, Double>, val selected: List<Item>, val
         }.filterNotNull()
         trees.forEach { tree ->
             passOneActions.forEach {
-                if (it !is RoundBuildings) {
+                if (roundBuildings || it !is RoundBuildings) {
                     it.apply(tree, options)
                 }
             }

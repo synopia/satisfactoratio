@@ -144,19 +144,6 @@ class CalculateBuildings : ConfigAction {
     }
 }
 
-/*
--   1
--   12
--   123
--   234
--   34
--   456
--   456
--   56
--   6
-
- */
-
 class CalculatePower() : ConfigAction {
     override fun visitBefore(tree: ConfigTree, options: ConfigOptions?) {
         if (tree.recipe != null && !tree.isGrouped) {
