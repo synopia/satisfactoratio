@@ -4,13 +4,3 @@ body {
     font-family: sans-serif;
 }
 
-.btn-icon {
-    background-color: white;
-    border: none;
-}
-
-.panel .panel-body .tile .tile-body {
-    overflow-x: visible;
-    overflow-y: visible;
-
-}

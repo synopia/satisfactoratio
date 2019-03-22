@@ -18,14 +18,10 @@ external object LZString {
 fun main(args: Array<String>) {
     render(document.getElementById("root")) {
         provider(store) {
-            div("container") {
-                div("columns") {
-                    div("column col-6") {
-                        itemSelectContainer()
-                    }
-                    div("column col-6") {
-                        resultContainer()
-                    }
+            div("tile is-ancestor is-parent") {
+                itemSelectContainer()
+                div("tile is-child box") {
+                    resultContainer()
                 }
             }
         }

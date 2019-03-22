@@ -6,6 +6,7 @@ import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
+import react.dom.p
 import test.Item
 import test.ItemGroup
 
@@ -21,33 +22,25 @@ interface ItemSelectProps : RProps {
 
 class ItemSelectComponent(props: ItemSelectProps) : RComponent<ItemSelectProps, RState>(props) {
     override fun RBuilder.render() {
-        div("panel") {
-            div("panel-header") {
-                div("panel-title h5") {
-                    +"Select Items"
-                }
+        div("tile is-child is-parent box") {
+            p("title") {
+                +"Select Items"
             }
-            div("panel-body") {
-                props.items.forEach { group ->
-                    div("tile tile-centered") {
-                        div("tile-content") {
-                            div("tile-title text-bold") {
-                                +group.name
-                            }
-                            div("columns") {
-                                group.items.forEach { item ->
-                                    item(item, props.selected.contains(item), props.amounts[item] ?: 0.0, {
-                                        props.onItemToggled(item)
-                                    }, { amount ->
-                                        props.onAmountChanged(item, amount)
-                                    })
-                                }
-                            }
+            props.items.forEach { group ->
+                div("tile is-child box") {
+                    p("subtitle") {
+                        +group.name
+                    }
+                    div("columns") {
+                        group.items.forEach { item ->
+                            item(item, props.selected.contains(item), props.amounts[item] ?: 0.0, {
+                                props.onItemToggled(item)
+                            }, { amount ->
+                                props.onAmountChanged(item, amount)
+                            })
                         }
                     }
                 }
-            }
-            div("panel-footer") {
             }
         }
     }

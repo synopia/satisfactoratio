@@ -12,8 +12,9 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.button
+import react.dom.i
 import react.dom.input
+import react.dom.span
 import styled.css
 import styled.styledDiv
 import styled.styledInput
@@ -38,6 +39,11 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
                 display = Display.inlineBlock
                 float = Float.left
             }
+            span(classes = "icon is-large") {
+                i("icon-${props.item.image}") {
+                    attrs["title"] = props.item.name
+                }
+            }
             input(InputType.checkBox) {
                 attrs {
                     checked = props.selected
@@ -45,9 +51,6 @@ class ItemComponent(props: ItemProps) : RComponent<ItemProps, RState>(props) {
                         props.onItemSelected(!props.selected)
                     }
                 }
-            }
-            button(classes = "btn-icon icon-${props.item.image} tooltip tooltip-bottom") {
-                attrs["data-tooltip"] = props.item.name
             }
             styledInput(InputType.number) {
                 css {
